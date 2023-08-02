@@ -27,7 +27,7 @@ jobs:
               with:
                   github_token: ${{ secrets.GH_TOKEN }}
                   patterns_to_include: shared/utils.lua
-                  committer_username: asyncapi-bot
-                  committer_email: info@asyncapi.io
+                  committer_username: gh_actions
+                  committer_email: rainmad.fivem@gmail.com
                   commit_message: 'chore: update utils'
                   repos_to_ignore: discordbot
