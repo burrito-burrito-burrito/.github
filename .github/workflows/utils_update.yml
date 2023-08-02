@@ -30,4 +30,4 @@ jobs:
                   committer_username: asyncapi-bot
                   committer_email: info@asyncapi.io
                   commit_message: 'chore: update utils'
-                  repos_to_ignore: utils
+                  repos_to_ignore: discordbot
