@@ -1,32 +1,33 @@
 name: update utils
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'shared/utils.lua'
-  workflow_dispatch:
-    inputs:
-      repo_name:
-        description: |
-          You can specify the repository's name where workflows should be pushed manually, as long as workflow settings do not ignore the repository.
-          If you do not specify the exact repository name, the workflow will try to replicate all missing changes to all repositories.
-        required: false
+    push:
+        branches: [main]
+        paths:
+            - 'shared/utils.lua'
+    workflow_dispatch:
+        inputs:
+            repo_name:
+                description: |
+                    You can specify the repository's name where workflows should be pushed manually, as long as workflow settings do not ignore the repository.
+                    If you do not specify the exact repository name, the workflow will try to replicate all missing changes to all repositories.
+                required: false
 
 jobs:
-
-  replicate_utils:
-      name: Replicate utils in all repositories
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Replicating file
-        uses: derberg/manage-files-in-multiple-repositories@v2
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          patterns_to_include: shared/utils.lua
-          committer_username: asyncapi-bot
-          committer_email: info@asyncapi.io
-          commit_message: "chore: update utils"
-          repos_to_ignore: utils
+    replicate_utils:
+        name: Replicate utils in all repositories
+        runs-on: ubuntu-latest
+        permissions:
+            checks: write
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+            - name: Replicating file
+              uses: derberg/manage-files-in-multiple-repositories@v2
+              with:
+                  github_token: ${{ secrets.GH_TOKEN }}
+                  patterns_to_include: shared/utils.lua
+                  committer_username: asyncapi-bot
+                  committer_email: info@asyncapi.io
+                  commit_message: 'chore: update utils'
+                  repos_to_ignore: utils
