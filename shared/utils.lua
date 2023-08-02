@@ -55,7 +55,7 @@ CreateThread(function()
     end
 end)
 
-local mathrandom, mathrandomseed = math.random, math.randomseed
+local mathrandom, random, mathrandomseed = math.random, math.random, math.randomseed
 mathrandomseed(GetGameTimer())
 uuid = function()
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
