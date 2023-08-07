@@ -55,7 +55,7 @@ CreateThread(function()
     end
 end)
 
-local mathrandom, random, mathrandomseed = math.random, math.random, math.randomseed
+mathrandom, random, mathrandomseed = math.random, math.random, math.randomseed
 mathrandomseed(GetGameTimer())
 uuid = function()
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
@@ -163,10 +163,7 @@ if not IsDuplicityVersion() then --client
         if lib then
             local libprogressBar = lib.progressBar
             if cfg and cfg['useOxCircleProgressBar'] then libprogressBar = lib.progressCircle end
-            if libprogressBar({
-                  duration = time * 1000,
-                  label = str,
-              }) then
+            if libprogressBar({ duration = time * 1000, label = str }) then
                 if cb then cb(true) end
             end
         else
