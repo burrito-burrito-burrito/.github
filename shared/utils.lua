@@ -167,35 +167,39 @@ if not IsDuplicityVersion() then --client
                 if cb then cb(true) end
             end
         else
-            RequestStreamedTextureDict('timerbars', true)
-            while not HasStreamedTextureDictLoaded('timerbars') do
-                Wait(1)
-            end
-            local percent, width = 1700, 0.005
-            local w = width * (percent / 100)
-            local x = (0.95 - (width * (percent / 100)) / 2) - width / 2
-            CreateThread(function()
-                while true do
-                    percent = percent - (1700 / (time * 100))
-                    w = width * (percent / 100)
-                    x = (0.91 - (width * (percent / 100)) / 2) - width / 2
-                    DrawSprite('TimerBars', 'ALL_BLACK_bg', 0.95, 0.95, 0.15, 0.0305, 0.0, 255, 255, 255, 180)
-                    DrawRect(0.95, 0.95, 0.085, 0.0109, 255, 255, 255, 50)
-                    DrawRect(x + w, 0.95, w, 0.0109, 255, 255, 255, 255)
-                    SetTextColour(255, 255, 255, 255)
-                    SetTextFont(0)
-                    SetTextScale(0.3, 0.3)
-                    SetTextCentre(true)
-                    BeginTextCommandDisplayText('STRING')
-                    AddTextComponentSubstringPlayerName(str)
-                    EndTextCommandDisplayText(0.868, 0.938)
-                    if percent <= 0 then
-                        if cb then cb(true) end
-                        break
+            loadTextureDict('timerbars', function()
+                local percent, width = 1700, 0.005
+                local w = width * (percent / 100)
+                local x = (0.95 - (width * (percent / 100)) / 2) - width / 2
+
+                BeginTextCommandGetWidth('STRING')
+                AddTextComponentSubstringPlayerName(str)
+                SetTextScale(0.3, 0.3)
+                SetTextCentre(true)
+                local textWidth = EndTextCommandGetWidth(true)
+                CreateThread(function()
+                    while true do
+                        percent = percent - (1700 / (time * 100))
+                        w = width * (percent / 100)
+                        x = (0.91 - (width * (percent / 100)) / 2) - width / 2
+                        -- DrawSprite('TimerBars', 'ALL_BLACK_bg', 0.95, 0.95, 0.15, 0.0305, 0.0, 255, 255, 255, 180)
+                        DrawSprite('timerbars', 'ALL_BLACK_bg', 0.96 - textWidth, 0.95, 0.2 + textWidth, 0.0305, 0.0, 255, 255, 255, 180)
+                        DrawRect(0.95, 0.95, 0.085, 0.0109, 255, 255, 255, 50)
+                        DrawRect(x + w, 0.95, w, 0.0109, 255, 255, 255, 255)
+                        SetTextColour(255, 255, 255, 255)
+                        SetTextFont(0)
+                        SetTextScale(0.3, 0.3)
+                        BeginTextCommandDisplayText('STRING')
+                        AddTextComponentSubstringPlayerName(str)
+                        EndTextCommandDisplayText(0.9 - textWidth, 0.938)
+                        if percent <= 0 then
+                            if cb then cb(true) end
+                            break
+                        end
+                        Wait(0)
                     end
-                    Wait(0)
-                end
-                SetStreamedTextureDictAsNoLongerNeeded('timerbars')
+                    SetStreamedTextureDictAsNoLongerNeeded('timerbars')
+                end)
             end)
         end
     end
