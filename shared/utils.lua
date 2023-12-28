@@ -5,13 +5,10 @@ if cfg?['framework'] then
 else
     local esx = GetResourceState('es_extended'):find('start')
     local qbcore = GetResourceState('qb-core'):find('start')
-    local qbox = GetResourceState('qbx-core'):find('start')
     if esx then
         framework = 'esx'
     elseif qbcore then
         framework = 'qb'
-    elseif qbox then
-        framework = 'qbox'
     end
 end
 
@@ -35,16 +32,13 @@ CreateThread(function()
                 ESX = fwObj
                 break
             end
-        elseif framework == 'qb' or framework == 'qbcore' or framework == 'qbox' then
+        elseif framework == 'qb' or framework == 'qbcore' then
             pcall(function() fwObj = exports['qb-core']:GetCoreObject() end)
             if not fwObj then
                 pcall(function() fwObj = exports['qb-core']:GetSharedObject() end)
             end
             if not fwObj then
                 TriggerEvent('QBCore:GetObject', function(obj) fwObj = obj end)
-            end
-            if not fwObj then
-                pcall(function() fwObj = exports['qbx-core']:GetCoreObject() end)
             end
             if fwObj then
                 QBCore = fwObj
