@@ -365,7 +365,7 @@ if not IsDuplicityVersion() then --client
                 SetModelAsNoLongerNeeded(model)
             end
         else
-            print('Model(' .. model .. ') is not valid!')
+            print('Model (' .. model .. ') is not valid!')
             if cb then cb(false) end
         end
     end
