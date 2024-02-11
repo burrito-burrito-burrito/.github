@@ -49,6 +49,7 @@ CreateThread(function()
     end
 end)
 
+playerId, resourceName = PlayerId(), GetCurrentResourceName()
 mathrandom, random, mathrandomseed = math.random, math.random, math.randomseed
 mathrandomseed(GetGameTimer())
 uuid = function()
@@ -98,10 +99,10 @@ if not IsDuplicityVersion() then --client
 
     triggerCallback = function(name, cb, ...)
         serverCallbacks[name] = cb
-        TriggerServerEvent(GetCurrentResourceName() .. ':server:triggerCallback', name, ...)
+        TriggerServerEvent(resourceName .. ':server:triggerCallback', name, ...)
     end
 
-    RegisterNetEvent(GetCurrentResourceName() .. ':client:triggerCallback', function(name, ...)
+    RegisterNetEvent(resourceName .. ':client:triggerCallback', function(name, ...)
         if serverCallbacks[name] then
             serverCallbacks[name](...)
             serverCallbacks[name] = nil
@@ -111,7 +112,7 @@ if not IsDuplicityVersion() then --client
     notification = function(str, type, length)
         if lib then
             lib.notify({
-                id = GetCurrentResourceName() .. '_notify_' .. uuid(),
+                id = resourceName .. '_notify_' .. uuid(),
                 description = str,
                 type = type,
             })
@@ -126,7 +127,7 @@ if not IsDuplicityVersion() then --client
         end
     end
 
-    RegisterNetEvent(GetCurrentResourceName() .. ':client:notification', notification)
+    RegisterNetEvent(resourceName .. ':client:notification', notification)
 
     helpNotification = function(str)
         AddTextEntry('helpNotification', str)
@@ -403,14 +404,7 @@ if not IsDuplicityVersion() then --client
         requestModel(model, function()
             local vehicle = CreateVehicle(model, coords.xyz, heading, not isLocal, true)
             local timeout = 0
-            if not isLocal then
-                local networkId = NetworkGetNetworkIdFromEntity(vehicle)
-                SetNetworkIdCanMigrate(networkId, true)
-                SetEntityAsMissionEntity(vehicle, true, false)
-            end
 
-            SetVehicleHasBeenOwnedByPlayer(vehicle, true)
-            SetVehicleNeedsToBeHotwired(vehicle, false)
             SetVehicleDirtLevel(vehicle, 0.0)
             SetVehicleModKit(vehicle, 0)
             SetVehRadioStation(vehicle, 'OFF')
@@ -432,7 +426,7 @@ if not IsDuplicityVersion() then --client
         local players = GetActivePlayers()
         local ped = PlayerPedId()
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
-        local maxDistance = maxDistance or 5
+        local maxDistance = maxDistance or 10
         local closePlayers = {}
         for _, player in pairs(players) do
             local target = GetPlayerPed(player)
@@ -451,7 +445,7 @@ if not IsDuplicityVersion() then --client
         local closestDistance, closestPlayer = false
         for i = 1, #closestPlayers, 1 do
             local p = closestPlayers[i]
-            if p and p ~= PlayerId() then
+            if p and p ~= playerId then
                 local target = GetPlayerPed(p)
                 local targetCoords = GetEntityCoords(target)
                 local distance = #(targetCoords - coords)
@@ -469,7 +463,7 @@ if not IsDuplicityVersion() then --client
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
         local peds = GetGamePool('CPed')
-        local maxDistance = maxDistance or 5
+        local maxDistance = maxDistance or 10
         local closestPeds = {}
         for i = 1, #peds, 1 do
             local p = peds[i]
@@ -487,7 +481,7 @@ if not IsDuplicityVersion() then --client
         local ped = PlayerPedId()
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
-        local peds = getClosestPeds(coords, 5, ignoreEntities)
+        local peds = getClosestPeds(coords, 10, ignoreEntities)
         local closestDistance, closestPed = false
         for i = 1, #peds, 1 do
             local p = peds[i]
@@ -508,7 +502,7 @@ if not IsDuplicityVersion() then --client
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
         local vehicles = GetGamePool('CVehicle')
-        local maxDistance = maxDistance or 5
+        local maxDistance = maxDistance or 10
         local closestVehicles = {}
         for i = 1, #vehicles, 1 do
             local v = vehicles[i]
@@ -526,7 +520,7 @@ if not IsDuplicityVersion() then --client
         local ped = PlayerPedId()
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
-        local vehicles = getClosestVehicles(coords, 5, ignoreEntities)
+        local vehicles = getClosestVehicles(coords, 10, ignoreEntities)
         local closestDistance, closestVehicle = false
         for i = 1, #vehicles, 1 do
             local v = vehicles[i]
@@ -547,7 +541,7 @@ if not IsDuplicityVersion() then --client
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
         local objects = GetGamePool('CObject')
-        local maxDistance = maxDistance or 5
+        local maxDistance = maxDistance or 10
         local closestObjects = {}
         for i = 1, #objects, 1 do
             local o = objects[i]
@@ -565,7 +559,7 @@ if not IsDuplicityVersion() then --client
         local ped = PlayerPedId()
         ignoreEntities = ignoreEntities and ignoreEntities or {}
         coords = coords and (type(coords) == 'table' and vec3(coords.x, coords.y, coords.z) or coords) or GetEntityCoords(ped)
-        local objects = getClosestObjects(coords, 5, ignoreEntities)
+        local objects = getClosestObjects(coords, 10, ignoreEntities)
         local closestDistance, closestObject = false
         for i = 1, #objects, 1 do
             local o = objects[i]
@@ -583,7 +577,7 @@ if not IsDuplicityVersion() then --client
 else
     local serverCallbacks = {}
 
-    local manifestFile = LoadResourceFile(GetCurrentResourceName(), 'fxmanifest.lua')
+    local manifestFile = LoadResourceFile(resourceName, 'fxmanifest.lua')
     local loadSqlFuncs = manifestFile:find('/lib/MySQL.lua') and true or false
     if loadSqlFuncs then
         sql = {}
@@ -627,7 +621,7 @@ else
     end
 
     notification = function(src, str, type, length)
-        TriggerClientEvent(GetCurrentResourceName() .. ':client:notification', src, str, type, length)
+        TriggerClientEvent(resourceName .. ':client:notification', src, str, type, length)
     end
 
     registerCallback = function(name, cb)
@@ -642,11 +636,11 @@ else
         end
     end
 
-    RegisterNetEvent(GetCurrentResourceName() .. ':server:triggerCallback', function(name, ...)
+    RegisterNetEvent(resourceName .. ':server:triggerCallback', function(name, ...)
         local src = source
 
         triggerCallback(name, src, function(...)
-            TriggerClientEvent(GetCurrentResourceName() .. ':client:triggerCallback', src, name, ...)
+            TriggerClientEvent(resourceName .. ':client:triggerCallback', src, name, ...)
         end, ...)
     end)
 
