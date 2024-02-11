@@ -49,7 +49,7 @@ CreateThread(function()
     end
 end)
 
-playerId, resourceName = PlayerId(), GetCurrentResourceName()
+resourceName = GetCurrentResourceName()
 mathrandom, random, mathrandomseed = math.random, math.random, math.randomseed
 mathrandomseed(GetGameTimer())
 uuid = function()
@@ -95,6 +95,7 @@ dt = function(table, w)
 end
 
 if not IsDuplicityVersion() then --client
+    playerId = PlayerId()
     serverCallbacks = {}
 
     triggerCallback = function(name, cb, ...)
