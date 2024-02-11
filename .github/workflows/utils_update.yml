@@ -27,8 +27,8 @@ jobs:
               with:
                   github_token: ${{ secrets.GH_TOKEN }}
                   patterns_to_include: shared/utils.lua
-                  # committer_username: burrito_actions
-                  # committer_email: rainmad.fivem@gmail.com
+                  committer_username: burrito_actions
+                  committer_email: rainmad.fivem@gmail.com
                   commit_message: 'chore: update utils'
-                  repos_to_ignore: discordbot, rm_stream, rm_minigames, rainmadcom
+                  repos_to_ignore: discordbot, rm_stream, rm_minigames, rainmadcom, gitbook_rainmad
                   bot_branch_name: 'main'
